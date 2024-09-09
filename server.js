@@ -16,12 +16,12 @@ let wss = new WSServer({
   perMessageDeflate: false,
 });
 const pool = createPool({
-  host: "mysql-2eace0c5-blob-9c2d.e.aivencloud.com",
-  port: 15992,
-  user: "avnadmin",
-  password: "AVNS_YVh1BB-tsLosof8XJin",
-  database: "defaultdb",
-  connectionLimit: 10,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  connectionLimit: process.env.DB_LIMIT,
 });
 
 const TypingLimiter = rateLimit({
@@ -36,37 +36,37 @@ Sapp.use(cors());
 
 Sapp.get("/login", (req, res) => {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("login.html", { root: __dirname });
+  res.sendFile("static/html/login.html", { root: __dirname });
 });
 
 Sapp.get("/css/styles.css", (req, res) => {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("styles.css", { root: __dirname });
+  res.sendFile("static/css/styles.css", { root: __dirname });
 });
 
 Sapp.get("/", function (req, res) {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("index.html", { root: __dirname });
+  res.sendFile("static/html/index.html", { root: __dirname });
 });
-Sapp.get("/websocket.js", function (req, res) {
+Sapp.get("/worker.js", function (req, res) {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("websocket.js", { root: __dirname });
+  res.sendFile("static/js/worker.js", { root: __dirname });
 });
 Sapp.get("/sheep3.css", function (req, res) {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("sheep3.css", { root: __dirname });
+  res.sendFile("static/css/sheep3.css", { root: __dirname });
 });
 Sapp.get("/sheep3.js", function (req, res) {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("sheep3.js", { root: __dirname });
+  res.sendFile("static/js/sheep3.js", { root: __dirname });
 });
 Sapp.get("/_dom2.js", function (req, res) {
   //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  res.sendFile("_dom2.js", { root: __dirname });
+  res.sendFile("static/js/_dom2.js", { root: __dirname });
 });
 Sapp.get("/register", function (req, res) {
   console.log("POST REQ");
-  if (req.get("ema-il") == null || "") {
+  if (req.get("email") == null || "") {
     console.log("[SERVER] Account creation request rejected, MISSING EMAIL");
     res.status(403);
     res.type("json");
@@ -508,6 +508,6 @@ wss.on("connection", (ws, req) => {
 });
 
 server.on("request", Sapp);
-server.listen(4000, function () {
+server.listen(process.ENV.PORT, function () {
   console.log(`[SERVER] Started Successfully waiting for users`);
 });
