@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nano Net</title>
+    <meta
+      name="description"
+      content="Nano Chat is a registered trademark of Sector 7 Empire"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/monolith.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="../sheep3.css" />
+    <link rel="stylesheet" type="text/css" href="../font-awesome.min.css" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://firebasestorage.googleapis.com/v0/b/nanochat-beta.appspot.com/o/logo.png?alt=media&token=3259281d-320a-4a06-a1c6-eda040b22a16"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js"></script>
+    <script src="../sheep3.js" charset="utf-8"></script>
+    <script src="_dom2.js" charset="utf-8"></script>
+    <script src="websocket.js"></script>
+    <style>
+      /* https://leovoel.github.io/embed-visualizer/ */
+      @font-face {
+        font-family: "Whitney";
+        font-style: normal;
+        font-weight: 100;
+        src: url(https://cdn.glitch.global/e317f4fe-da83-4cae-9a02-77534c940ac0/3bdef1251a424500c1b3a78dea9b7e57.woff?v=1719980724062)
+          format("woff");
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      :root {
+        --blue: rgb(89, 104, 234);
+        --light-blue: rgb(50, 51, 56);
+        --text-normal: #2e3338;
+        --dark-blue: #005dd1;
+        --grey: rgb(43, 45, 49);
+        --deprecated-text-input-border-disabled: #dcddde;
+        --font-display: Ginto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --text-link: #000;
+        --text-link-low-saturation: #000;
+        --deprecated-text-input-border-hover: #b9bbbe;
+      }
+
+      ::selection {
+        background: black;
+      }
+
+      .textarea:focus {
+        border-color: rgb(55, 57, 63);
+        outline: 0;
+      }
+
+      a:hover {
+        cursor: pointer;
+      }
+
+      .container {
+        max-width: 400px;
+        width: 100%;
+        background: rgb(30, 31, 34);
+        padding: 30px;
+        border-radius: 30px;
+      }
+      .img-area {
+        position: relative;
+        width: 100%;
+        height: 240px;
+        background: var(--grey);
+        margin-bottom: 30px;
+        border-radius: 15px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .img-area .icon {
+        font-size: 100px;
+      }
+      .img-area h3 {
+        font-size: 20px;
+        font-weight: 500;
+        color: rgb(242, 243, 245);
+        margin-bottom: 6px;
+      }
+      .img-area p {
+        color: #999;
+      }
+      .img-area p span {
+        font-weight: 600;
+      }
+      .img-area img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        z-index: 100;
+      }
+      .img-area::before {
+        content: attr(data-img);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-weight: 500;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 200;
+      }
+      .img-area.active:hover::before {
+        opacity: 1;
+      }
+      .select-image {
+        display: block;
+        width: 100%;
+        padding: 16px 0;
+        border-radius: 15px;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 500;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .select-image:hover {
+        background: var(--dark-blue);
+      }
+      ul {
+        list-style-type: none;
+      }
+      .scroll-bar {
+        height: 90%;
+        width: 100%;
+        border: 1px slategray;
+        overflow: auto;
+      }
+      ::-webkit-scrollbar {
+        width: 7.5px;
+      }
+
+      ::-webkit-scrollbar-track {
+        margin-top: 3px;
+        margin-bottom: 3px;
+        border: 1px;
+        background: rgb(43, 45, 49);
+        border-radius: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgb(26, 27, 30);
+        border-radius: 8px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgb(26, 27, 30);
+      }
+      body {
+        font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background-color: rgb(50, 51, 56);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px rgb(40, 40, 40);
+      }
+      input,
+      textarea,
+      button {
+        -webkit-appearance: none;
+        border: none;
+        background: none;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        box-sizing: border-box;
+      }
+      input[type="text"] {
+        width: 0;
+      }
+      textarea {
+        resize: none;
+        height: 0;
+        overflow: hidden;
+        display: block;
+        width: 100%;
+      }
+      button {
+        cursor: pointer;
+      }
+
+      .image {
+        border-radius: 50%;
+      }
+      .image::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-image: url("https://cdn.discordapp.com/avatars/754619094598287401/293adf17883e5e266ec46621ecfd1777.webp?size=160");
+        background-size: auto 75%;
+        background-repeat: no-repeat;
+        position: relative;
+        background-position: center;
+        border-radius: 50%;
+        opacity: 1;
+      }
+      .image:hover::before {
+        opacity: 0.9;
+        border-radius: 50%;
+      }
+
+      .link {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        background-image: url("https://firebasestorage.googleapis.com/v0/b/nanochat-beta.appspot.com/o/logo.png?alt=media&token=3259281d-320a-4a06-a1c6-eda040b22a16");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+        flex-shrink: 0;
+      }
+      .link[href="#"] {
+        opacity: 0.3;
+      }
+      .link:hover {
+        opacity: 0.7;
+      }
+
+      /* from Discord */
+      .textArea-2Spzkt::placeholder {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color: #72767d;
+      }
+      .message {
+        padding: 20px 0;
+        flex-grow: 1;
+      }
+      .mbr-message {
+        padding-bottom: 27px;
+        padding-top: 5px;
+        padding-left: 6px;
+      }
+      .msg-img {
+        margin-left: 55px;
+      }
+      .header {
+        height: 1.375em;
+        display: flex;
+        align-items: flex-start;
+      }
+      .avatar {
+        position: relative;
+        top: 2px;
+        margin-right: 10px;
+        margin-left: 1px;
+        margin-bottom: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+      .mbr-avatar {
+        position: relative;
+        top: 2px;
+        margin-right: 10px;
+        margin-left: 1px;
+        margin-bottom: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+      .username {
+        font-weight: 500;
+        font-size: 1rem;
+        line-height: 1.375em;
+        color: white;
+      }
+      .msg_content {
+        font-weight: 450;
+        font-size: 0.9rem;
+        line-height: 1.375em;
+        margin-left: 55px;
+        color: rgb(255, 255, 255);
+      }
+      .bot {
+        margin-left: 0.3rem;
+        position: relative;
+        top: -0.1em;
+        background: #7289da;
+        color: #fff;
+        font-size: 0.625em;
+        font-weight: 500;
+        height: 1.28em;
+        padding: 0.072rem 0.275rem;
+        margin-top: 0.075em;
+        border-radius: 3px;
+        vertical-align: baseline;
+        line-height: 1.3;
+      }
+      .timestamp {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #72767d;
+        margin-left: 0.3rem;
+      }
+      .content {
+        margin-left: 0px;
+        padding-right: 10px;
+      }
+      .img-content {
+        margin-top: 5px;
+        margin-left: 50px;
+        padding-right: 10px;
+      }
+      .markup {
+        font-size: 1rem;
+        line-height: 1.375;
+        word-wrap: break-word;
+        color: #dcddde;
+        font-weight: 400;
+      }
+      .embed {
+        max-width: 426px;
+        margin-top: 8px;
+        display: flex;
+        position: relative;
+      }
+      .close {
+        opacity: 0;
+        position: absolute;
+        top: -2px;
+        right: -20px;
+        padding: 2px;
+        color: #72767d;
+      }
+      .embed:hover > .close {
+        opacity: 1;
+      }
+      .close:hover {
+        color: #dcddde;
+      }
+      .embed-pill {
+        background-color: #4f545c;
+        width: 4px;
+        border-radius: 3px 0 0 3px;
+        flex-shrink: 0;
+      }
+      .embed-inner {
+        padding: 8px 10px;
+        box-sizing: border-box;
+        background-color: rgba(46, 48, 54, 0.3);
+        border: 1px solid rgba(46, 48, 54, 0.6);
+        border-radius: 0 3px 3px 0;
+        overflow: hidden;
+      }
+      .embed-content {
+        display: flex;
+      }
+      .embed-content-inner {
+        flex: 1;
+      }
+      .embed-author {
+        display: flex;
+        align-items: center;
+      }
+      .embed-author-icon {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+        background-size: contain;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .embed-author-name {
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 400;
+      }
+      .embed-margin {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 4px;
+        align-items: center;
+      }
+      .embed-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-block;
+        color: white;
+        width: 0;
+        flex: auto;
+      }
+      .embed-description {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        line-height: 1rem;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      .embed-field {
+        margin-top: 4px;
+        flex: 0;
+        min-width: 100%;
+        position: relative;
+      }
+      .embed-field-inline {
+        flex: 1;
+        min-width: 150px;
+        flex-basis: auto;
+      }
+      .embed-field-name {
+        color: white;
+        margin-bottom: 4px;
+        font-size: 0.875rem;
+        font-weight: 400;
+      }
+      .embed-field-value {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        font-weight: 400;
+        white-space: pre-line;
+      }
+      .embed-thumbnail {
+        width: 80px;
+        height: 53px;
+        margin-left: 16px;
+        flex-shrink: 0;
+        border-radius: 3px;
+      }
+      .embed-image {
+        width: 400px;
+        height: 225px;
+        border-radius: 3px;
+        margin-top: 8px;
+      }
+      .embed-footer {
+        display: flex;
+        align-items: center;
+      }
+      .embed-footer-icon {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-size: contain;
+      }
+      .embed-footer-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      .embed-footer-separator {
+        color: #4f545c;
+        font-weight: 700;
+        display: inline-block;
+        margin: 0 4px;
+      }
+      .add-btn {
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+        color: #7289da;
+        text-align: center;
+        font-size: 12px;
+        line-height: 32px;
+        font-weight: 500;
+        border-radius: 3px;
+        text-transform: uppercase;
+      }
+      .add-btn:hover {
+        background-color: rgba(79, 84, 92, 0.16);
+      }
+      .add-field-btn {
+        margin-top: 4px;
+        flex: 0;
+        min-width: 100%;
+      }
+      .add-embed-btn {
+        width: 426px;
+        margin-top: 8px;
+      }
+      .channel-textarea {
+        flex-shrink: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-left: 15px;
+      }
+      .channel-textarea-1 {
+        position: relative;
+        flex-shrink: 0;
+        padding: 30px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-bottom: 1px;
+        padding-top: 0px;
+      }
+      .inner {
+        display: flex;
+        background-color: #40444b;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+      .permalink {
+        display: inline-block;
+        padding: 12px 12px;
+        width: 24px;
+
+        height: 24px;
+        opacity: 0.73;
+        background-image: url("https://firebasestorage.googleapis.com/v0/b/nanochat-beta.appspot.com/o/upload.png?alt=media&token=7c4405cc-4c69-40b8-a33e-a40f9f602419");
+        background-size: 24px;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      .permalink:hover {
+        opacity: 0.87;
+      }
+      .textarea {
+        border-left: 1px solid #36393f;
+        font-weight: 400;
+        font-size: 1rem;
+        line-height: 1.25rem;
+        max-height: 144px;
+        width: 100%;
+        min-height: 20px;
+        margin: 2px 2px 2px 0;
+        padding: 10px;
+        color: #ffffff;
+      }
+      .failed {
+        color: #f04747;
+      }
+
+      .embed-field:hover {
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      .field-remove,
+      .field-inline {
+        position: absolute;
+        opacity: 0;
+        right: 2px;
+        color: white;
+      }
+      .embed-field:hover .field-remove,
+      .embed-field:hover .field-inline {
+        opacity: 0.5;
+      }
+      .field-remove:hover,
+      .field-inline:hover {
+        opacity: 1;
+      }
+      .field-remove {
+        top: 0;
+      }
+      .field-inline {
+        bottom: 0;
+        font-size: 0.5em;
+        line-height: 2;
+      }
+
+      .status {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        margin-left: 80px;
+        padding-right: 10px;
+        padding-bottom: 20px;
+        opacity: 0;
+        animation: appear 0.5s forwards;
+      }
+      .dropup {
+        position: relative;
+        display: inline-block;
+      }
+
+      /* Dropup content (Hidden by Default) */
+      .dropup-content {
+        display: none;
+        position: absolute;
+        bottom: 50px;
+        border-radius: 6px;
+        background-color: rgb(17, 18, 20);
+        min-width: 210px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+      img.msg_img {
+        max-width: 38%;
+        max-height: 500px;
+      }
+
+      /* Links inside the dropup */
+      .dropup-content a {
+        color: rgb(255, 255, 255);
+        padding: 12px 16px;
+        border-radius: 3px;
+        margin: 9px;
+        text-decoration: none;
+        display: block;
+      }
+
+      /* Change color of dropup links on hover */
+      .dropup-content a:hover {
+        background-color: rgb(89, 104, 234);
+      }
+
+      /* Show the dropup menu on hover */
+      .dropup:hover .dropup-content {
+        display: block;
+      }
+      #icon {
+        align-items: right;
+      }
+
+      /* Change the background color of the dropup button when the dropup content is shown */
+      .dropup:hover .permalink {
+      }
+      .hidden {
+        pointer-events: none;
+        user-select: none;
+        animation: disappear 0.5s forwards;
+      }
+      .occupy {
+        height: 98.5%;
+        overflow: hidden;
+      }
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+      }
+      .member_pad {
+        padding-top: 10px;
+      }
+      .member_color {
+        background: rgb(26, 24, 24);
+      }
+      @keyframes appear {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes disappear {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+      .flex-container {
+        display: none;
+        height: 100%;
+      }
+
+      .flex-child-big {
+        flex: 82;
+      }
+      .flex-child-small {
+        flex: 18;
+      }
+      .presence-flex-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .mbr-cls:hover {
+        background-color: rgb(64, 66, 72);
+        border-radius: 7px;
+      }
+      .mbr-cls {
+        margin-top: 10px;
+        margin-right: 10px;
+      }
+
+      .presence-flex-child {
+        flex: 1;
+      }
+      .box {
+        background-color: black;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .box a {
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 3px;
+        text-decoration: none;
+      }
+      #icon {
+        align-items: right;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .content-1 {
+        position: relative;
+        height: fit-content;
+        width: 40%;
+        background: rgb(30, 31, 34);
+        border-radius: 8px;
+      }
+      .content-2 {
+        position: relative;
+        height: fit-content;
+        padding-bottom: 24px;
+        width: 32%;
+        background: rgb(30, 31, 34);
+        border-radius: 8px;
+      }
+      li:hover {
+        background-color: rgb(47, 48, 53);
+      }
+      .item {
+        position: relative;
+        display: inline-block;
+      }
+      .notify-badge {
+        position: absolute;
+        background: rgb(73, 145, 88);
+        text-align: center;
+        border-radius: 10px 10px 10px 10px;
+        color: white;
+        padding: 5px;
+        margin-left: 33px;
+        visibility: hidden;
+        margin-top: 33px;
+        font-size: 1px;
+      }
+
+      .modal:target {
+        display: flex;
+      }
+      .inputWrapper-31_8H8 {
+        display: -webkit-box;
+        border-color: #000;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+      }
+      .inputDefault-_djjkz {
+        padding: 10px;
+        background-color: rgb(50, 51, 56);
+        border-radius: 3px;
+        height: 45px;
+      }
+      .input-cIJ7To:hover {
+        border-color: var(--deprecated-text-input-border-hover);
+      }
+
+      .input-cIJ7To.focused-1mmYsC,
+      .input-cIJ7To:focus {
+        border-color: #0009;
+        outline: 0;
+        -webkit-box-shadow: #000;
+        box-shadow: #000;
+      }
+      .size14-e6ZScH {
+        font-size: 14px;
+        line-height: 18px;
+      }
+
+      .input-cIJ7To.error-2O5WFJ {
+        border-color: hsl(
+          359,
+          calc(var(--saturation-factor, 1) * 82.6%),
+          59.4%
+        );
+      }
+
+      .input-cIJ7To.success-2-F980 {
+        border-color: hsl(
+          139,
+          calc(var(--saturation-factor, 1) * 47.3%),
+          43.9%
+        );
+      }
+
+      .input-cIJ7To.disabled-2BKQFm {
+        border-color: var(--deprecated-text-input-border-disabled);
+      }
+
+      .input-cIJ7To.editable-2UkCu4 {
+        background-color: transparent;
+        border-color: transparent;
+      }
+      .inputWrapper-31_8H8 {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+      }
+
+      .button-discord {
+        display: inline-block;
+        outline: none;
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        padding: 2px 16px;
+        height: 38px;
+        min-width: 96px;
+        min-height: 38px;
+        border: none;
+        color: #fff;
+        background-color: rgb(88, 101, 242);
+        transition: background-color 0.17s ease, color 0.17s ease;
+      }
+      input::file-selector-button {
+        display: inline-block;
+        outline: none;
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        padding: 2px 16px;
+        height: 38px;
+        min-width: 96px;
+        min-height: 38px;
+        border: none;
+        color: #fff;
+        background-color: rgb(88, 101, 242);
+        transition: background-color 0.17s ease, color 0.17s ease;
+      }
+      input::file-selector-button:hover {
+        background-color: rgb(71, 82, 196);
+      }
+      .button-discord:hover {
+        background-color: rgb(71, 82, 196);
+      }
+      .colorStandard-2KCXvj {
+        color: var(--text-normal);
+      }
+      .h5-18_1nd {
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .title-3sZWYQ {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        cursor: default;
+        font-family: var(--font-display);
+      }
+
+      .h5-18_1nd {
+        font-size: 12px;
+        line-height: 16px;
+      }
+      .defaultMarginh5-2mL-bP {
+        margin-bottom: 8px;
+      }
+      @media only screen and (max-width: 679px) {
+        .flex-child-small {
+          display: none;
+        }
+        .inner {
+          margin-right: 10px;
+        }
+        ul {
+          padding-inline-start: 12px;
+        }
+        .content-2 {
+          width: 90%;
+        }
+      }
+      ul {
+        padding-inline-start: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="popup-box" class="modal">
+      <div class="content-1">
+        <img
+          id="pop_avatar"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJhRsiTLWK4NIt-y8zcRIp7sPm6aU61F2J0k5x7L6f7Uwzr_LR"
+          alt="Italian Trulli"
+          style="
+            height: 95px;
+            width: 95px;
+            border-radius: 50%;
+            margin-top: 22px;
+            margin-left: 22px;
+          "
+        />
+        <a
+          onclick="window.location = '#'"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: rgb(242, 243, 245);
+            font-size: 30px;
+            text-decoration: none;
+          "
+          >&times;</a
+        >
+
+        <div
+          style="
+            height: fit-content;
+            width: 100%;
+            background-color: rgb(43, 45, 49);
+            border-radius: 8px;
+          "
+        >
+          <ul style="margin-top: 10px; margin-bottom: 0px">
+            <li
+              id="pop_name"
+              style="padding-top: 19px; color: rgb(242, 243, 245)"
+            >
+              Display Name: Loading...
+            </li>
+            <li
+              id="pop_email"
+              style="padding-top: 14px; color: rgb(242, 243, 245)"
+            >
+              Email : Loading...
+            </li>
+            <li
+              id="pop_date"
+              style="padding-top: 14px; color: rgb(242, 243, 245)"
+            >
+              Created On : Loading...
+            </li>
+            <li
+              id="pop_password"
+              style="padding-top: 14px; color: rgb(242, 243, 245)"
+            >
+              Password: **********
+            </li>
+            <li style="padding-top: 14px; color: rgb(242, 243, 245)">
+              Badge: <span id="pop_tag" class="bot">STAFF</span>
+            </li>
+
+            <li
+              id="pop_id"
+              style="padding-top: 14px; color: rgb(242, 243, 245)"
+            >
+              ID: Loading...
+            </li>
+            <li
+              id="pop_status"
+              style="
+                padding-top: 14px;
+                padding-bottom: 19px;
+                color: rgb(242, 243, 245);
+              "
+            >
+              2FA Status: Disabled
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="image-upload" class="modal">
+      <div class="content-2" style="width: 35%">
+        <a
+          onclick="window.location = '#'"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: rgb(242, 243, 245);
+            font-size: 30px;
+            text-decoration: none;
+          "
+          >&times;</a
+        >
+        <h1
+          style="
+            margin-bottom: 10px;
+            margin-right: 15px;
+            margin-top: 50px;
+            font-size: 1.6pc;
+            text-align: center;
+            color: rgb(255, 255, 255);
+          "
+        >
+          Upload an Image
+        </h1>
+        <h1
+          style="
+            margin-bottom: 30px;
+            margin-right: 15px;
+            margin-left: 15px;
+            margin-top: 10px;
+            font-size: 1pc;
+            text-align: center;
+            color: rgb(179, 183, 188);
+          "
+        >
+          The Max Size of the image should be 5MB and accepts only
+          .png/.jpg/.jpeg extensions
+        </h1>
+        <input
+          type="file"
+          id="img-upload"
+          name="img"
+          accept="image/*"
+          style="
+            margin-left: 40%;
+            margin-top: 20px;
+            color: rgb(255, 255, 255);
+            font-size: 0%;
+          "
+        />
+      </div>
+    </div>
+    <div id="error" class="modal">
+      <div class="content-2">
+        <h1
+          style="
+            margin-bottom: 10px;
+            margin-right: 15px;
+            margin-top: 50px;
+            font-size: 1.6pc;
+            text-align: center;
+            color: rgb(255, 255, 255);
+          "
+        >
+          Disconnected from server
+        </h1>
+        <h1
+          style="
+            margin-bottom: 30px;
+            margin-right: 15px;
+            margin-left: 15px;
+            margin-top: 10px;
+            font-size: 1pc;
+            text-align: center;
+            color: rgb(179, 183, 188);
+          "
+        >
+          You have been disconnected from the server. Click the button below to
+          try connecting to server.
+        </h1>
+        <button
+          id="btn_reconnect"
+          class="button-discord"
+          style="margin-left: 40%; margin-top: 20px"
+        >
+          Reconnect
+        </button>
+      </div>
+    </div>
+    <div id="loading" class="modal">
+      <div class="content-2" style="background-color: rgb(50, 51, 56)">
+        <h1
+          style="
+            margin-bottom: 30px;
+            margin-right: 15px;
+            margin-left: 15px;
+            margin-top: 10px;
+            font-size: 1pc;
+            text-align: center;
+            color: rgb(255, 255, 255);
+          "
+        >
+          Loading...
+        </h1>
+      </div>
+    </div>
+    <div id="banned" class="modal">
+      <div class="content-2">
+        <h1
+          style="
+            margin-bottom: 10px;
+            margin-right: 15px;
+            margin-top: 50px;
+            font-size: 1.6pc;
+            text-align: center;
+            color: rgb(255, 255, 255);
+          "
+        >
+          Account suspended
+        </h1>
+        <h1
+          style="
+            margin-bottom: 30px;
+            margin-right: 15px;
+            margin-left: 15px;
+            margin-top: 10px;
+            font-size: 1pc;
+            text-align: center;
+            color: rgb(179, 183, 188);
+          "
+        >
+          Your account has been suspended indefinitely. If you think this is a
+          mistake, contact Administrators of 𝗦𝗘𝗖𝗧𝗢𝗥 𝟳.
+        </h1>
+        <button
+          id="btn_logout"
+          class="button-discord"
+          style="margin-left: 35%; margin-top: 20px"
+        >
+          Go back to Login
+        </button>
+      </div>
+    </div>
+    <div id="profile" class="modal">
+      <div class="content-2">
+        <a
+          onclick="window.location = '#'"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: rgb(242, 243, 245);
+            font-size: 30px;
+            text-decoration: none;
+          "
+          >&times;</a
+        >
+
+        <h1
+          style="
+            margin-bottom: 10px;
+            margin-right: 15px;
+            margin-top: 50px;
+            font-size: 1.6pc;
+            text-align: center;
+            color: rgb(255, 255, 255);
+          "
+        >
+          Change your username
+        </h1>
+
+        <h1
+          style="
+            margin-bottom: 30px;
+            margin-right: 15px;
+            margin-top: 7px;
+            font-size: 1pc;
+            text-align: center;
+            color: rgb(179, 183, 188);
+          "
+        >
+          Enter a new username and click save for change.
+        </h1>
+
+        <div>
+          <h5
+            class="colorStandard-2KCXvj size14-e6ZScH h5-18_1nd title-3sZWYQ defaultMarginh5-2mL-bP"
+            style="
+              margin-top: 30px;
+              margin-left: 20px;
+              margin-bottom: 5px;
+              color: rgb(255, 255, 255, 0.7);
+            "
+          >
+            USERNAME
+          </h5>
+          <div class="inputWrapper-31_8H8">
+            <input
+              id="txt_input_username"
+              class="inputDefault-_djjkz input-cIJ7To"
+              placeholder=""
+              autocomplete="off"
+              maxlength="20"
+              spellcheck="false"
+              value=""
+              style="
+                font-size: 1.17pc;
+                margin-left: 20px;
+                margin-right: 20px;
+                color: rgb(255, 255, 255);
+              "
+            />
+          </div>
+          <button
+            id="btn_submit_username"
+            class="button-discord"
+            style="margin-left: 77%; margin-top: 20px"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="flex-container" id="root-app">
+      <div class="flex-child-big">
+        <div id="div_holder" class="occupy">
+          <div class="scroll-bar" id="scroll_div">
+            <ul id="msg_ls"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="flex-child-small">
+        <div class="presence-flex-container">
+          <div class="presence-flex-container">
+            <div class="member-scroll-bar" id="scroll_mem_div">
+              <ul id="mbr_s" style="padding-left: 20px">
+                <p
+                  style="
+                    color: rgb(149, 155, 163);
+                    text-align: center;
+                    margin-right: 59px;
+                    font-weight: bold;
+                  "
+                >
+                  Online
+                </p>
+              </ul>
+            </div>
+          </div>
+          <div class="presence-flex-container">
+            <div class="member-scroll-bar" id="scroll_mem_div">
+              <ul id="mbr_ls" style="padding-left: 20px">
+                <p
+                  style="
+                    color: rgb(149, 155, 163);
+                    text-align: center;
+                    margin-right: 59px;
+                    font-weight: bold;
+                  "
+                >
+                  Offline
+                </p>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      class ImageInput {
+        constructor({ className, label, url = null } = {}) {
+          this.elem = Elem("button", {
+            className: [className, "image"],
+            title: label,
+            style: {
+              backgroundImage: url ? `url("${encodeURI(url)}")` : null,
+            },
+          });
+          this.url = url;
+        }
+
+        toJSON() {
+          return this.url;
+        }
+      }
+
+      class TextInput {
+        constructor({
+          className,
+          value = "",
+          placeholder,
+          multiline = true,
+        } = {}) {
+          let willCalculate = true;
+          if (multiline) {
+            this.elem = Elem("textarea", {
+              className,
+              value,
+              placeholder,
+              cols: 1,
+              oninput: (e) => {
+                this.elem.style.height = 0;
+                if (!willCalculate) {
+                  willCalculate = true;
+                  window.requestAnimationFrame(() => {
+                    this.elem.style.height = this.elem.scrollHeight + 1 + "px";
+                    willCalculate = false;
+                  });
+                }
+              },
+              onchange: (e) => {
+                if (window.onChange) window.onChange();
+              },
+            });
+            window.requestAnimationFrame(() => {
+              this.elem.style.height = this.elem.scrollHeight + 1 + "px";
+              willCalculate = false;
+            });
+          } else {
+            this.elem = Elem("input", {
+              className,
+              type: "text",
+              value,
+              placeholder,
+              oninput: (e) => {
+                this.elem.style.width = 0;
+                if (!willCalculate) {
+                  willCalculate = true;
+                  window.requestAnimationFrame(() => {
+                    this.elem.style.width =
+                      (this.elem.value ? this.elem.scrollWidth + 1 : 100) +
+                      "px";
+                    willCalculate = false;
+                  });
+                }
+              },
+              onchange: (e) => {
+                if (window.onChange) window.onChange();
+              },
+            });
+            window.requestAnimationFrame(() => {
+              this.elem.style.width =
+                (this.elem.value ? this.elem.scrollWidth + 1 : 100) + "px";
+              willCalculate = false;
+            });
+          }
+        }
+
+        get value() {
+          return this.elem.value;
+        }
+
+        toJSON() {
+          return this.value;
+        }
+      }
+
+      const params = new URL(window.location).searchParams;
+      let json;
+      try {
+        json = JSON.parse(params.get("json"));
+        if (json === null || typeof json !== "object") throw json;
+      } catch (e) {
+        json = {};
+      }
+      const {
+        content,
+        username: usernameText,
+        avatar_url,
+        tts,
+        embeds: embedsArray = [],
+      } = json;
+
+      const avatar = new ImageInput({
+        className: "avatar image",
+        url: avatar_url,
+        label: "Set avatar URL",
+      });
+      const username = new TextInput({
+        className: "username",
+        value: usernameText,
+        placeholder: "Username",
+        multiline: false,
+      });
+      const message = new TextInput({
+        className: "markup",
+        value: content,
+        placeholder: "Message content ",
+      });
+
+      const permalink = Elem("a", {
+        className: "permalink",
+        id: "image-upload-btn",
+        //href: "#image-upload",
+      });
+      var list = document.getElementById("div_holder");
+      var entry = document.createElement("div");
+
+      entry.appendChild(
+        Elem("div", { className: "channel-textarea", id: "input_div" }, [
+          status,
+          //
+          Elem(
+            "div",
+            { className: "channel-textarea-1", id: "new_input_div" },
+            [
+              Elem("i", { className: "username", id: "typing_holder_txt" }, [
+                `‎ `,
+              ]),
+            ]
+          ),
+          Elem("div", { className: "inner" }, [
+            Elem("div", { className: "dropup" }, [
+              permalink,
+              Elem("div", { className: "dropup-content" }, [
+                Elem(
+                  "a",
+                  {
+                    id: "dropup_profile",
+                    //href: "#profile",
+                    class: "dropdown-item",
+                  },
+                  ["🪪  Profile"]
+                ),
+                Elem(
+                  "a",
+                  {
+                    id: "dropup_image",
+                    //href: "#image-upload",
+                    class: "dropdown-item",
+                  },
+                  ["📁  Upload Image"]
+                ),
+              ]),
+            ]),
+            Elem("input", {
+              className: "textarea",
+              type: "url",
+              id: "text-enter",
+              placeholder: "Type Something",
+              onkeydown(e) {
+                if (e.key === "Enter") {
+                  // Send to multiple webhook URLs at once by separating them with
+                  // spaces
+                  fetch("/message", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json, text/plain, */*",
+                      authorization: localStorage.getItem("authentication"),
+                      content: this.value,
+                    },
+                  })
+                    .then((this.value = ""))
+                    .then((res) => console.log(res));
+                }
+              },
+              onchange(e) {},
+              onkeyup(e) {
+                if (this.value.length % 20 === 0 && this.value.length != 0) {
+                  // do search for this.value here
+                  console.log("[CLIENT] USER IS TYPING");
+                  fetch("/typing", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json, text/plain, */*",
+                      authorization: localStorage.getItem("authentication"),
+                    },
+                  }).then((res) => console.log(res));
+                }
+                if (this.value.length == 1) {
+                  // do search for this.value here
+                  console.log(
+                    "[CLIENT] USER IS TYPING SWITCH TO ACTIVE PROTOCOL"
+                  );
+                  fetch("/typing", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json, text/plain, */*",
+                      authorization: localStorage.getItem("authentication"),
+                    },
+                  }).then((res) => console.log(res));
+                }
+              },
+            }),
+          ]),
+        ])
+      );
+      list.appendChild(entry);
+    </script>
+  </body>
+</html>

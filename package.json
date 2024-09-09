@@ -1,0 +1,40 @@
+{
+  "name": "discord themed token based chat app",
+  "version": "0.1.0",
+  "description": "A Simple token based discord clone made using express and websocket servers using MySQL as a database",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "base-64": "^1.0.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "mysql2": "^3.10.1",
+    "path": "^0.12.7",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "repository": {
+    "url": "https://github.com/ashokreddykallam/"
+  },
+  "license": "GNU AGPLv3",
+  "keywords": [
+    "node",
+    "discord",
+    "discord clone",
+    "express",
+    "discord backend",
+    "discord design",
+    "discord global chat",
+    "simple chat app",
+    "token based chat app",
+    "disord tokens",
+    "mysql chat app"
+  ]
+}
