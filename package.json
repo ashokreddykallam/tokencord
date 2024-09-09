@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A Simple token based discord clone made using express and websocket servers using MySQL as a database",
   "main": "server.js",
+  "author":"https://github.com/ashokreddykallam",
   "scripts": {
     "start": "node server.js"
   },
@@ -15,13 +16,13 @@
     "express-rate-limit": "^7.3.1",
     "mysql2": "^3.10.1",
     "path": "^0.12.7",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
   },
   "engines": {
     "node": "14.x"
   },
   "repository": {
-    "url": "https://github.com/ashokreddykallam/"
+    "url": "https://github.com/ashokreddykallam/tokencord"
   },
   "license": "GNU AGPLv3",
   "keywords": [
