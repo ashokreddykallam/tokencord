@@ -35,33 +35,33 @@ Sapp.use("/static", express.static("static"));
 Sapp.use(cors());
 
 Sapp.get("/login", (req, res) => {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/html/login.html", { root: __dirname });
 });
 
 Sapp.get("/css/styles.css", (req, res) => {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/css/styles.css", { root: __dirname });
 });
 
 Sapp.get("/", function (req, res) {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/html/index.html", { root: __dirname });
 });
 Sapp.get("/worker.js", function (req, res) {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/js/worker.js", { root: __dirname });
 });
 Sapp.get("/sheep3.css", function (req, res) {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/css/sheep3.css", { root: __dirname });
 });
 Sapp.get("/sheep3.js", function (req, res) {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/js/sheep3.js", { root: __dirname });
 });
 Sapp.get("/_dom2.js", function (req, res) {
-  //res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.setHeader("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
   res.sendFile("static/js/_dom2.js", { root: __dirname });
 });
 Sapp.get("/register", function (req, res) {
