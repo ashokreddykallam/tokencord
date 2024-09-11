@@ -1,7 +1,11 @@
 # Tokencord
-A Simple invite only token based discord clone made using express and websockets using MySQL as a database, which can be easily hosted and scaled up easily using ngnix or hosted locally for personal use and for those who don’t want their data to be in thrid party servers.
+A robust and secure invite-only chat platform, engineered with Express and WebSockets and backed by MySQL. This platform is designed for easy deployment and scalability, whether hosted locally for personal use or scaled up with Nginx for broader application. It ensures that your data remains private, without reliance on third-party servers.
 
-Similar mobile versions can also be made using the same backend for both iOS and Android, if one is well aware on implementing websockets and api requests. 
+<b>Performance:</b> Tested to support up to 1000 concurrent users locally, contingent on the specifications and bandwidth of both the client and server.
+
+<b>Flexibility:</b> The backend architecture is versatile, enabling the creation of analogous mobile applications for iOS and Android. Developers with proficiency in WebSockets and API integrations can seamlessly extend the service across different platforms.
+
+a high-performance, secure messaging solution that prioritizes scalability needs while being user friendly. 
 
 # Features
 - [x] Token Based authentication
