@@ -69,5 +69,6 @@ CREATE TABLE "users" (
 
 <b>Step 6:</b> For bot accounts use a Database client and change the `tag` in users table.
 
+<b>Step 7:</b> This should make site accessible in your local network. However, if you want the site to be accessible globally then use `port forwarding` method.
 
 
